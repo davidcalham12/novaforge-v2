@@ -1,0 +1,8 @@
+{
+  "stage": "FLOW-3",
+  "agent": "science-critic",
+  "ts": "2026-09-23T00:00:00Z",
+  "verdict": "clean",
+  "violations": [],
+  "ambiguities": []
+}
