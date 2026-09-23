@@ -1133,6 +1133,30 @@ ceiling — that is the only bound there is.
 database; a `claude` process whose parent is gone.
 **Reviewed by:** whoever next kills a server.
 
+### 3.24 A unit has half the ceiling to work in
+
+**What is not verified:** that a unit of work fits under 100,000 tokens. Two of
+the first three measured do not.
+
+**Measured, 2026-09-23** (`domain-knowledge.md` §8.8). A fresh orchestrator
+starts at about **48,800 tokens** — 49,139, 48,828 and 48,699 on the three units
+of one run — before it reads anything of the novel. It is not the data (that
+Bible is 10 KB) and it is not the tool list: three probes with fifteen, five and
+two tools all began at ~50,600. So the ceiling leaves a unit roughly **51,000
+tokens** of room. `world` finished at 82,686; `cast` halted at 100,669 and
+`outline` at 109,722.
+
+**Why accepted:** the ceiling is the owner's requirement and the figure is
+protected (`AGENTS.md` §6); the halt makes the overrun visible and stops the
+run rather than letting a unit quietly exceed it. What the measurement changes
+is which lever is real — smaller units, not a leaner prompt — and that is a
+decision with a cost (each split re-pays the floor) rather than a tweak.
+**Scope of damage:** a novel cannot be completed by the conductor until its
+units fit.
+**How we would find out:** `halted: context` naming a unit, which is how this
+row came to exist.
+**Reviewed by:** whoever splits the units.
+
 ### 3.21 `--max-budget-usd` binds — measured, 2026-09-23
 
 **Closed, and it is now a guarantee rather than a gap (G22).** The question was
@@ -1332,6 +1356,7 @@ planned — and which it does not, with why.
 
 | version | date | what changed |
 |---|---|---|
+| 7 | 2026-09-23 | **The per-stage orchestrator, measured.** §3.24: a fresh orchestrator starts at ~48,800 tokens, so the 100,000 ceiling leaves a unit ~51,000 to work in; two of the first three units did not fit. The floor is not the tool list — three probes with fifteen, five and two tools all began at ~50,600. |
 | 6 | 2026-09-23 | **SPEC-011 (Haiku) and the budget probe.** The ten agents run on Haiku; `models.orchestrator` is a config knob, `null` by default. §3.21 **closed with evidence**: `--max-budget-usd` binds, the CLI halts itself with `error_max_budget_usd`, overshoot $0.03 on a $1.00 ceiling — and the watcher is the backstop, not the brake, for the reason the row now states. Every cost figure recorded before today was measured under Opus authors and Sonnet critics and says so. Tests 521 → 524. |
 | 5 | 2026-09-23 | **PLAN-010 (SPEC-010).** §3.5 rewritten: the stream *does* carry a per-subagent figure (`total_tokens`) and the parser had ignored it — the old claim is kept as history; G2's layer 2 measures; §3.22 opened (events with an unknown id); §3.14 gains its first real evidence (the tracked dead run). Tests 509 → 521 (+2 skipped with reasons). |
 | 4 | 2026-09-23 | **SPEC-008.** §3.20 closed with its test; the archive knows `prose_check.json` (`test_the_prose_check_file_is_known_and_not_warned_about`), so a run archives with no noise warnings. Tests 506 → 509. |

@@ -939,3 +939,45 @@ its running estimate read cents while the CLI's meter read a dollar. The flag
 stopped the run; the watcher only read the tombstone. `verification.md` §3.21
 says so plainly, because a second line of defence that has never fired first is
 a backstop, not a brake.
+
+### 8.8 Half the ceiling is spent on existing
+
+The per-stage orchestrator of SPEC-EXAM-003 launches a fresh `claude -p` for
+each unit of work so that no part of a run carries the whole book. The first
+real run measured what a fresh one carries before it carries anything:
+
+| unit | turns | first turn | largest turn | verdict |
+|---|---|---|---|---|
+| world | 42 | 49,139 | 82,686 | fits |
+| cast | 62 | 48,828 | **100,669** | over by 669 |
+| outline | 29 | 48,699 | **109,722** | over by 9,722 |
+
+**Every unit starts at about 48,800 tokens**, before it opens a single file of
+the run. The Bible those units read is 10 KB — roughly 2,500 tokens — so the
+data a unit carries is not what fills it.
+
+**And it is not the tool list either.** Three real probes, one `claude -p` each,
+same trivial prompt, in the same repository:
+
+| `--allowedTools` | first turn |
+|---|---|
+| the runner's fifteen | 50,563 |
+| five | 50,810 |
+| `Read`, `Write` only | 50,812 |
+
+The same number three times. Cutting thirteen tools from the list changed
+nothing, so the floor is not the tool schemas, and by the same arithmetic it is
+not the twelve agent descriptions or the skill, which together are a few
+thousand tokens.
+
+**What this costs the design.** With the ceiling at 100,000 a unit has about
+51,000 tokens of working room, because half the ceiling is gone before it
+begins. `world` fits in that; `cast` and `outline` do not. The lever is
+therefore **smaller units** — splitting the outline into writing and auditing,
+the cast into people and chronology — and not a leaner prompt. Each split
+re-pays the floor, which is the arithmetic anyone choosing that path should do
+first.
+
+The ceiling itself does not move: it is the owner's requirement and
+`AGENTS.md` §6 protects the figure. What changes is that the gap between the
+requirement and the architecture is now measured instead of suspected.
