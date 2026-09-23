@@ -90,7 +90,7 @@ with the reason attached — two have, and they say so.
 | G17 | there is no credential to leak; nothing reaches a subprocess through argv | **critical** | **A** + **T** | yes |
 | G18 | the pipeline has one implementation, `SKILL.md`; the backend re-implements no stage | important | **A** + **I** | yes |
 | G19 | state is persisted as the stream reveals it, not at the end | important | **T** for every stream line (`events`), the stage and the calls; **not held** for the gate record until the archive | **partly → §3.14**, narrowed |
-| G22 | the budget ceiling is the profile's figure, and one figure reaches both `--max-budget-usd` and the watcher | important | **T** | yes |
+| G22 | the budget ceiling is the profile's figure, one figure reaches both `--max-budget-usd` and the watcher, and the CLI stops at it | important | **T** for the figure, **D** for the stop (one measured run, §3.21) | yes |
 | G23 | a halt asked for by the user is recorded as the user's, through the same finish as a watcher trip | incidental | **T** | yes |
 | G20 | a feedback sheet is complete and never quotes a previous chapter | important | **T** for the validator, **I** for its being run | yes |
 | G21 | LOOP-003 §8.3's prohibitions hold: the threshold is 8, the attempts are three, the characteristics are the listed ones | incidental | **T** | yes |
@@ -1106,19 +1106,37 @@ phase (the endpoint work), not to a quick fix.
 **How we would find out:** `curl /api/runs/nope/events`.
 **Reviewed by:** PLAN-009 phase 1.
 
-### 3.21 Whether `--max-budget-usd` binds under a subscription is unknown
+### 3.21 `--max-budget-usd` binds — measured, 2026-09-23
 
-**What is not verified:** that the CLI flag the runner passes (G22) stops a
-`claude -p` run at the figure, when the session is a subscription rather than
-API credit.
-**Why accepted:** the only way to learn it is a run that reaches its ceiling,
-and the two Paso 10 runs ended at 65% and 50% of theirs; provoking it costs a
-run. The watcher on the stream is the second line and is tested (G22).
-**Scope of damage:** none while the watcher holds; the flag is the cheaper stop,
-not the only one.
-**How we would find out:** a run halted `budget` by the watcher whose `result`
-shows the CLI let it past the figure — or the opposite.
-**Reviewed by:** whoever first sees a `halted: budget` on a real run.
+**Closed, and it is now a guarantee rather than a gap (G22).** The question was
+whether the flag stops a `claude -p` run under a subscription. A deliberate
+probe answered it: a real `tiny` run launched against a ceiling of **$1.00**
+(`NOVAFORGE_BUDGET=1.0`, which lowers the profile's 25.0) ended in 6.6 seconds
+with the CLI's own
+
+```json
+{"type": "result", "subtype": "error_max_budget_usd", "is_error": true,
+ "total_cost_usd": 1.0296, "num_turns": 1}
+```
+
+**The CLI stopped itself**; the backend's watcher only read the final figure and
+wrote `halted: budget — spent $1.03 against a ceiling of $1.00`. **The overshoot
+was $0.03, 3% of the ceiling, and it is bounded by the turn in flight** — the
+call that crosses the line finishes and the next does not start.
+
+**What remains unverified, and it is a different thing:** that the *watcher*
+(the second line of defence) can stop a run before the `result` event.
+`BudgetWatcher` prices `input + output` tokens between `result` events at the
+worst rate on file, and that estimate stays in the cents while the real spend is
+in dollars, because the orchestrator's cost is mostly cache creation, which it
+does not count (found in the code audit of 2026-09-23, left out of scope by
+SPEC-010 §2). **So today the flag is the working brake and the watcher is the
+backstop, not the reverse**, and the run above is what demonstrates it.
+**Scope of damage:** a session whose CLI lacked the flag would run to the
+profile's ceiling before anything noticed.
+**How we would find out:** a `result` without `error_max_budget_usd` on a run
+whose cost passed its ceiling.
+**Reviewed by:** the next run that reaches a ceiling.
 
 ### 3.20 The import CLI on a fresh database labels v2 runs as v1 history
 
@@ -1287,6 +1305,7 @@ planned — and which it does not, with why.
 
 | version | date | what changed |
 |---|---|---|
+| 6 | 2026-09-23 | **SPEC-011 (Haiku) and the budget probe.** The ten agents run on Haiku; `models.orchestrator` is a config knob, `null` by default. §3.21 **closed with evidence**: `--max-budget-usd` binds, the CLI halts itself with `error_max_budget_usd`, overshoot $0.03 on a $1.00 ceiling — and the watcher is the backstop, not the brake, for the reason the row now states. Every cost figure recorded before today was measured under Opus authors and Sonnet critics and says so. Tests 521 → 524. |
 | 5 | 2026-09-23 | **PLAN-010 (SPEC-010).** §3.5 rewritten: the stream *does* carry a per-subagent figure (`total_tokens`) and the parser had ignored it — the old claim is kept as history; G2's layer 2 measures; §3.22 opened (events with an unknown id); §3.14 gains its first real evidence (the tracked dead run). Tests 509 → 521 (+2 skipped with reasons). |
 | 4 | 2026-09-23 | **SPEC-008.** §3.20 closed with its test; the archive knows `prose_check.json` (`test_the_prose_check_file_is_known_and_not_warned_about`), so a run archives with no noise warnings. Tests 506 → 509. |
 | 3 | 2026-09-22 | **After PLAN-007 6.1–6.12** (SPEC-007 approved, built on `backend-v1`). G19 raised to **T for the stream** on the evidence of `test_events.py` and the SSE tests; G22 and G23 added; §3.14 narrowed (the restart case is closed, the mid-flight archive is not); G21's note closed (the Node instruments carry six); §3.19, §3.20 and §3.21 opened. **No letter was raised without a test named beside it.** Tests 449 → 506. What the two real runs of Paso 10 showed is in §3.19's neighbour rows and in `domain-knowledge.md` §8. |

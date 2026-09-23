@@ -911,3 +911,31 @@ That file is `check_prose`'s output, written beside the critiques by design; the
 archiver does not know the name and says so every time. Harmless, and noise —
 a warning that fires on every run stops being read. **SPEC-008 gave the archive
 the name** the next morning; the two real runs above were the last to carry it.
+
+### 8.7 The first turn of the orchestrator cost a dollar
+
+The budget probe of 2026-09-23 was meant to answer one question — does
+`--max-budget-usd` bind — and answered a second by accident. The run halted at
+**$1.03 after one turn and 6.6 seconds**, having loaded `SKILL.md` and written
+one tool call. Nothing had been dispatched; no agent had run; no word of the
+novel existed.
+
+That is the shape of this system's bill. The orchestrator carries the procedure,
+the config and the growing state in its context, and the first turn pays to
+create that cache. §2.2 said the orchestrator's turns were most of a run's cost
+and §6.3 measured their size (a median of 147,000 tokens); this is the same fact
+with a price on it.
+
+**The lever that follows.** `SPEC-011` moved the ten agents to Haiku — the half
+of the bill that writes and judges. The other half is `models.orchestrator`,
+which the same spec left at `null` on purpose: the orchestrator arbitrates
+findings and applies patches, and downgrading the arbiter is a decision with a
+named risk, not a saving. The `tiny-haiku` profile exists to measure what that
+decision would buy, on one run, before anyone takes it.
+
+**And the watcher did not catch it.** The backend's `BudgetWatcher` prices
+`input + output` between `result` events and does not count cache creation, so
+its running estimate read cents while the CLI's meter read a dollar. The flag
+stopped the run; the watcher only read the tombstone. `verification.md` §3.21
+says so plainly, because a second line of defence that has never fired first is
+a backstop, not a brake.

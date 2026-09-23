@@ -80,6 +80,13 @@ def test_every_run_cost_quoted_in_the_docs_matches_a_file():
         # figure and saying so beats widening the rule until it catches nothing.
         4.60: "$49.33 / 10,723 words, per thousand",
         4.93: "$54.87 / 11,133 words, per thousand",
+        1.00: "the ceiling of the 2026-09-23 budget probe, a setting and not a "
+              "measurement (verification.md §3.21)",
+        1.03: "what the CLI's own `result` reported when it stopped that probe "
+              "(`error_max_budget_usd`, total_cost_usd 1.0296). The run halted "
+              "in FLOW-1 and wrote no cost.json, which is the finding rather "
+              "than an omission: a run that dies before the archive leaves its "
+              "figure only in `events` (verification.md §3.14, §3.21)",
     }
 
     offenders = []
