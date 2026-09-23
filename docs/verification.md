@@ -1106,6 +1106,33 @@ phase (the endpoint work), not to a quick fix.
 **How we would find out:** `curl /api/runs/nope/events`.
 **Reviewed by:** PLAN-009 phase 1.
 
+### 3.23 A server that dies leaves its orchestrator running, and spending
+
+**What is not verified:** that killing the backend stops the `claude -p` it
+launched. It does not. `RunProcess.stop()` is called by a watcher trip or by
+`POST /halt`; a server that is terminated — by a crash, a `taskkill`, a closed
+terminal — never calls it, and the orchestrator it spawned keeps running,
+keeps writing into `output/`, and keeps spending.
+
+**Measured, 2026-09-23.** Four attempts to launch one run left **three orphaned
+orchestrators** alive after their servers were killed. They ran for 25, 27 and
+29 minutes each, writing three novels nobody asked for, and were found only
+because `output/` had four Leo directories where it should have had one. The
+startup sweep (FR-RUN-7) marks such a run `halted: process` in the database —
+which is exactly the trap: **the row says the run is over while the process is
+still billing.**
+
+**Why accepted, for now:** the fix is a process group or a recorded PID that a
+new server reaps at startup, and it belongs to the same spec that gives
+`sweep_orphans` teeth. Naming it costs a paragraph; the alternative is that the
+next person reads `halted: process` and believes it.
+**Scope of damage:** money, without limit, until someone looks at Task Manager.
+`--max-budget-usd` still binds per process, so each orphan stops at its own
+ceiling — that is the only bound there is.
+**How we would find out:** more `output/<slug>/` directories than runs in the
+database; a `claude` process whose parent is gone.
+**Reviewed by:** whoever next kills a server.
+
 ### 3.21 `--max-budget-usd` binds — measured, 2026-09-23
 
 **Closed, and it is now a guarantee rather than a gap (G22).** The question was
