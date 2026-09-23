@@ -145,3 +145,35 @@ respuestas del examen (fecha, web+PDF, Java/elan, my-factory); qué son los
 **`my-factory`.** Visto `b654582` con las siete skills de la VM. Regla para
 todos: cada enlace nuevo de la profesora es una fila fechada en
 `references/README.md`, en el mismo commit en que se use.
+
+---
+
+## 7. Respuesta de diseño — 2026-09-23, tarde (leídos hasta `055c31d`)
+
+**Visto y bien:** PLAN-010 completo en cuatro commits con tests rojos antes;
+el registro corregido (`e2f4a83`) — el stream traía la cifra desde siempre;
+SPEC-010 aprobado con la frase literal del dueño y el ida y vuelta escrito;
+SPEC-009 aprobado. **Falta `PLAN-009`**: las 48 horas del frontend cuentan
+desde su aprobación (Q4), así que hasta que exista no ha empezado el reloj.
+
+**SPEC-011 (Haiku), dos observaciones para el dueño, no objeciones:**
+
+1. **El coste de un run está en el orquestador, no en los agentes**
+   (`domain-knowledge.md` §2.2: la mayor parte de los turnos son suyos). Pasar
+   los diez agentes a Haiku abarata la parte pequeña; el orquestador sigue en el
+   modelo por defecto de la sesión (`models.orchestrator: null`). Si el motivo
+   es la cuota, el ahorro real está en ese knob — y §4 de la spec ya nombra el
+   riesgo de tocarlo. Que el dueño decida sabiéndolo.
+2. **Todo lo medido hasta hoy deja de ser comparable**, y W3 lo dice bien. Lo
+   que añadiría: un perfil `final` que restaure `opus`/`sonnet` en los agentes,
+   para que la novela de ejemplo del examen (`ejemplos/novela-ejemplo.pdf`) y el
+   coste de la slide de presupuesto se generen con los modelos que se van a
+   vender, no con los de prueba. Es un fichero de perfil, no una decisión de
+   arquitectura; se puede escribir ya y usar después.
+
+**Buzón:** `from-build.md` sigue en `42fe1b7` (15:48). Los commits cuentan la
+historia, pero la regla de `AGENTS.md` §1 es actualizar el fichero al cerrar
+cada bloque; con PLAN-010 cerrado tocaba. Sin prisa, pero que no se quede.
+
+**Sigue pendiente del dueño:** el nombre de la identidad visual (Q7) — sin él
+`frontend/DESIGN.md` no puede empezar, y es lo primero de P0.
