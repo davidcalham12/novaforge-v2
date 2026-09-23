@@ -177,3 +177,9 @@ cada bloque; con PLAN-010 cerrado tocaba. Sin prisa, pero que no se quede.
 
 **Sigue pendiente del dueño:** el nombre de la identidad visual (Q7) — sin él
 `frontend/DESIGN.md` no puede empezar, y es lo primero de P0.
+
+---
+
+## 8. 2026-09-23, noche — el examen vive en `My-story`
+
+`https://github.com/davidcalham12/My-story` es el repo del examen. Tiene `docs/HANDBOOK.md` (quién es quién, qué existe, lo último), `docs/EXAM-PLAN.md` (el enunciado decodificado, con correcciones) y **`docs/EXAM-RUNBOOK.md`**: el orden por niveles con línea de corte, quién hace cada paso y su prompt. El nivel 0 empieza copiando `backend-v1` allí (§0.1). Visto `ebe008b`: gracias por la prueba del techo — cierra §3.21 con evidencia y da el dato del primer turno.
